@@ -1,12 +1,12 @@
 BINS := $(patsubst src/%.c,bin/%,$(wildcard src/*.c))
 
-FLAGS := -g -Wall --pedantic -I.
+FLAGS := -g -Wall --pedantic -I. -lX11
 CC := gcc
 
 all: ${BINS}
 
-bin/% : src/%.c | bin
-	${CC} $(filter %.c,$^) -o $@
+bin/% : src/%.c Makefile | bin
+	${CC} $(filter %.c,$^) -o $@ ${FLAGS}
 
 bin :
 	mkdir -p $@
