@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include <X11/Xlib.h>
 
 #include <pulse/pulseaudio.h>
 #include <pulse/rtclock.h>
 
+#include <alsa/asoundlib.h>
 
 Window window = {0};
 Display * display = NULL;
@@ -91,6 +93,23 @@ main(void)
   //  printf("%s\n", "Could not connect to pulse audio server, aborting.");
   //  return EXIT_FAILURE;
   //}
+
+  #define LEN_BUFFER 48000
+  #define FREQ_DEFAULT 600
+
+  snd_output_t * output = NULL;
+  float buffer[LEN_BUFFER] = {0};
+
+  snd_pcm_t * handle = NULL;
+  snd_pcm_sframes_t frames = {0};
+
+  int err = 0;
+  err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
+  if (err < 0) {
+    printf("Alsa error: %s\n", snd_strerror(err));
+    return EXIT_FAILURE;
+  }
+
 
   display = XOpenDisplay(NULL);
 

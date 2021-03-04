@@ -1,6 +1,6 @@
 BINS := $(patsubst src/%.c,bin/%,$(wildcard src/*.c))
 
-FLAGS := -g -Wall --pedantic -I. -lX11
+FLAGS := -g -Wall --pedantic -I. -lX11 -lasound -lm
 CC := gcc
 
 all: ${BINS}
