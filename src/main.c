@@ -69,23 +69,28 @@ int
 main(void)
 {
 
-  pa_mainloop * pa_mainloop = pa_mainloop_new();
-  if (pa_mainloop == NULL) {
-    printf("%s\n", "pa_mainloop_new() returned NULL, aborting.");
-    return EXIT_FAILURE;
-  }
+  //pa_mainloop * pa_mainloop = pa_mainloop_new();
+  //if (pa_mainloop == NULL) {
+  //  printf("%s\n", "pa_mainloop_new() returned NULL, aborting.");
+  //  return EXIT_FAILURE;
+  //}
 
-  pa_mainloop_api * pa_mainloop_api = pa_mainloop_get_api(pa_mainloop);
-  if (pa_mainloop_api == NULL) {
-    printf("%s\n", "pa_mainloop_get_api() returned NULL, aborting.");
-    return EXIT_FAILURE;
-  }
+  //pa_mainloop_api * pa_mainloop_api = pa_mainloop_get_api(pa_mainloop);
+  //if (pa_mainloop_api == NULL) {
+  //  printf("%s\n", "pa_mainloop_get_api() returned NULL, aborting.");
+  //  return EXIT_FAILURE;
+  //}
 
-  pa_context * pa_context = pa_context_new(pa_mainloop_api, "pa_test");
-  if (pa_context == NULL) {
-    printf("%s\n", "pa_context_new() returned NULL, aborting.");
-    return EXIT_FAILURE;
-  }
+  //pa_context * pa_context = pa_context_new(pa_mainloop_api, "pa_test");
+  //if (pa_context == NULL) {
+  //  printf("%s\n", "pa_context_new() returned NULL, aborting.");
+  //  return EXIT_FAILURE;
+  //}
+
+  //if (pa_context_connect(pa_context, NULL, 0, NULL) < 0) {
+  //  printf("%s\n", "Could not connect to pulse audio server, aborting.");
+  //  return EXIT_FAILURE;
+  //}
 
   display = XOpenDisplay(NULL);
 
