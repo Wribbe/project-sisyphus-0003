@@ -70,44 +70,53 @@ process_events(void)
 int
 main(void)
 {
+  unsigned char buffer[16*1024];
 
-  //pa_mainloop * pa_mainloop = pa_mainloop_new();
-  //if (pa_mainloop == NULL) {
-  //  printf("%s\n", "pa_mainloop_new() returned NULL, aborting.");
-  //  return EXIT_FAILURE;
-  //}
+  for (int i=0; i<sizeof(buffer); i++) {
+    float res = sinf(i/16);
+    buffer[i] = (char)(((res+1.0f)/2)*255);
+    printf("%f ", ((res+1)/2));
+  }
 
-  //pa_mainloop_api * pa_mainloop_api = pa_mainloop_get_api(pa_mainloop);
-  //if (pa_mainloop_api == NULL) {
-  //  printf("%s\n", "pa_mainloop_get_api() returned NULL, aborting.");
-  //  return EXIT_FAILURE;
-  //}
+  int err;
+  snd_pcm_t * handle;
 
-  //pa_context * pa_context = pa_context_new(pa_mainloop_api, "pa_test");
-  //if (pa_context == NULL) {
-  //  printf("%s\n", "pa_context_new() returned NULL, aborting.");
-  //  return EXIT_FAILURE;
-  //}
+  static char * device = "default";
 
-  //if (pa_context_connect(pa_context, NULL, 0, NULL) < 0) {
-  //  printf("%s\n", "Could not connect to pulse audio server, aborting.");
-  //  return EXIT_FAILURE;
-  //}
-
-  #define LEN_BUFFER 48000
-  #define FREQ_DEFAULT 600
-
-  snd_output_t * output = NULL;
-  float buffer[LEN_BUFFER] = {0};
-
-  snd_pcm_t * handle = NULL;
-  snd_pcm_sframes_t frames = {0};
-
-  int err = 0;
-  err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
+  err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0);
   if (err < 0) {
-    printf("Alsa error: %s\n", snd_strerror(err));
+    printf("Playback open error: %s\n", snd_strerror(err));
     return EXIT_FAILURE;
+  }
+
+  err = snd_pcm_set_params(
+    handle,
+    SND_PCM_FORMAT_U8,
+    SND_PCM_ACCESS_RW_INTERLEAVED,
+    1,
+    48000,
+    1,
+    500000
+  );
+
+  if (err < 0) {
+    printf("Playback open error: %s\n", snd_strerror(err));
+    return EXIT_FAILURE;
+  }
+
+  snd_pcm_sframes_t frames;
+  for (int i=0; i<16; i++) {
+    frames = snd_pcm_writei(handle, buffer, sizeof(buffer));
+    if (frames < 0) {
+      frames = snd_pcm_recover(handle, frames, 0);
+    }
+    if (frames < 0) {
+      printf("snd_pcm_write1 failed: %s\n", snd_strerror(frames));
+      break;
+    }
+    if (frames > 0 && frames < (long)sizeof(buffer)) {
+      printf("Short write (excepted %li, wrote %li)\n", (long)sizeof(buffer), frames);
+    }
   }
 
 
